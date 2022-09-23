@@ -6,6 +6,8 @@ const editForm = document.querySelector("#edit-form");
 const editInput = document.querySelector("#edit-input");
 const cancelEditBtn = document.querySelector("#cancel-edit-btn");
 
+let oldInputValue;
+
 // Functions
 const saveTodo = (text) => {
     const todo = document.createElement("div");
@@ -36,6 +38,24 @@ const saveTodo = (text) => {
     todoInput.focus();
 };
 
+const toggleForms = () => {
+    editForm.classList.toggle("hide");
+    todoForm.classList.toggle("hide");
+    todoList.classList.toggle("hide");
+};
+
+const updateTodo = (text) => {
+    const todos = document.querySelectorAll(".todo");
+
+    todos.forEach((todo) => {
+        let todoTitle = todo. querySelector("h3");
+
+        if (todoTitle.innerText === oldInputValue) {
+            todoTitle.innerText = text;
+        };
+    });
+};
+
 // Events
 todoForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -46,3 +66,51 @@ todoForm.addEventListener("submit", (e) => {
         saveTodo(inputValue)
     }
 });
+
+    // botões de finalizar / editar / excluir  =  EXPLICAÇÃO 01
+document.addEventListener("click", (e) => {
+    const targetEl = e.target;
+    const parentEl = targetEl.closest("div") // explicação 01.1
+    let todoTitle;
+
+    if (parentEl && parentEl.querySelector("h3")) {
+        todoTitle = parentEl.querySelector("h3").innerText;
+    }
+
+    // aqui estamos vendo onde será clicado e se onde foi clicado dentro da lista de classe existe a classe chamada "finish-todo"
+    if (targetEl.classList.contains("finish-todo")) {
+        parentEl.classList.toggle("done");
+    };
+
+    if (targetEl.classList.contains("remove-todo")) {
+        parentEl.remove();
+    };
+
+    if (targetEl.classList.contains("edit-todo")) {
+        toggleForms()
+
+        editInput.value = todoTitle
+        oldInputValue = todoTitle
+    };
+})
+
+    // botão de cancelar
+cancelEditBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    toggleForms()
+});
+
+editForm.addEventListener("submit", (e) => {
+
+    e.preventDefault()
+
+    const editInputValue = editInput.value
+
+    if (editInputValue) {
+        updateTodo(editInputValue)
+    }
+
+    toggleForms()
+
+})
